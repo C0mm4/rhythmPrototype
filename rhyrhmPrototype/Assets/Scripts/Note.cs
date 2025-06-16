@@ -27,7 +27,7 @@ public class Note : MonoBehaviour
         scrollSpeed = 10;
     }
 
-    private void Update()
+    public void Update()
     {
         double now = AudioSettings.dspTime - startDspTime; 
         float dirX = Mathf.Cos(radianDir);
@@ -41,13 +41,16 @@ public class Note : MonoBehaviour
 
         transform.position = new Vector3((float)(dspTime - now) * scrollSpeed * dirX + 1.5f * dirX, 1, (float)(dspTime - now) * scrollSpeed * dirY + 1.5f * dirY);
 
-        if (isLateMiss(now))
+        if (judgeSystem.judges[noteIndex] == -1)
         {
-            if (judgeSystem.inRangeNotes.Contains(this))
+            if (isLateMiss(now))
             {
-                judgeSystem.inRangeNotes.Remove(this);
-                judgeSystem.judges[noteIndex] = 0;
-                Destroy(gameObject);
+                if (judgeSystem.inRangeNotes.Contains(this))
+                {
+                    judgeSystem.inRangeNotes.Remove(this);
+                    judgeSystem.judges[noteIndex] = 0;
+                    Destroy(gameObject);
+                }
             }
         }
     }
@@ -107,6 +110,7 @@ public class Note : MonoBehaviour
         {
             judgeSystem.inRangeNotes.Remove(this);
             judgeSystem.judges[noteIndex] = 1;
+            Destroy(gameObject);
             return 1;
         }
         // -150ms ~ -100ms
@@ -115,6 +119,7 @@ public class Note : MonoBehaviour
         {
             judgeSystem.inRangeNotes.Remove(this);
             judgeSystem.judges[noteIndex] = 2;
+            Destroy(gameObject);
             return 2;
         }
         // -100ms ~ -50ms
@@ -123,6 +128,7 @@ public class Note : MonoBehaviour
         {
             judgeSystem.inRangeNotes.Remove(this);
             judgeSystem.judges[noteIndex] = 3;
+            Destroy(gameObject);
             return 3;
         }
         // -50ms ~ 20ms
@@ -131,6 +137,7 @@ public class Note : MonoBehaviour
         {
             judgeSystem.inRangeNotes.Remove(this);
             judgeSystem.judges[noteIndex] = 4;
+            Destroy(gameObject);
             return 4;
         }
         // 20ms ~ 50ms
@@ -139,12 +146,14 @@ public class Note : MonoBehaviour
         {
             judgeSystem.inRangeNotes.Remove(this);
             judgeSystem.judges[noteIndex] = 1;
+            Destroy(gameObject);
             return 1;
         }
         // 50ms ~
         // fail
         judgeSystem.inRangeNotes.Remove(this);
         judgeSystem.judges[noteIndex] = 0;
+        Destroy(gameObject);
         return 0;
     }
 

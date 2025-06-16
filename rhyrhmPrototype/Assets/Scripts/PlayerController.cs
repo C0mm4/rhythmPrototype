@@ -8,7 +8,6 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     public TestCode code;
-    private Quaternion targetQuaternion;
     [SerializeField]
     private float cursorDir;
 

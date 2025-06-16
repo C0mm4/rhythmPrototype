@@ -2,6 +2,7 @@ using Palmmedia.ReportGenerator.Core.Reporting.Builders;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
@@ -19,7 +20,7 @@ public class TestCode : MonoBehaviour
     public GameObject flipNotePrefab2;
     public GameObject taptapNotePrefab;
 
-    public List<Note> inRangeNotes;
+    public HashSet<Note> inRangeNotes;
 
     public Note[] notes;
     public int[] judges;
@@ -42,7 +43,7 @@ public class TestCode : MonoBehaviour
             judges[i] = -1;
         }
 
-        inRangeNotes = new List<Note>();
+        inRangeNotes = new HashSet<Note>();
 
         currentT = 0;
 
@@ -72,7 +73,7 @@ public class TestCode : MonoBehaviour
 
         for (int i = 0; i < inRangeNotes.Count; i++)
         {
-            int judge = inRangeNotes[i].Judge(now, dir);
+            int judge = inRangeNotes.ElementAt(i).Judge(now, dir);
             if(judge != -1)
             {
                 break;
