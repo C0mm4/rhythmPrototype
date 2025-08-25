@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{43a53ac7-9374-4fa3-a113-e2560176dff1}">
+		<property name="assetPath">
+			<value>Songs/2 - 12 - Bedlam.mp3</value>
+		</property>
+		<property name="isStreaming">
+			<value>true</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>129.33224489795919</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{e2122ff7-3f45-45d7-b466-8a87fb9f3a01}</destination>
+		</relationship>
+	</object>
+</objects>

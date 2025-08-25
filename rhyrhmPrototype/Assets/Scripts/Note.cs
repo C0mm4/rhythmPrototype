@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Note : MonoBehaviour
 {
-    double dspTime;
+    public double dspTime;
     double[] judgeTime;
     double startDspTime;
     float scrollSpeed;
@@ -12,9 +13,10 @@ public class Note : MonoBehaviour
 
     public int noteIndex;
 
-    public TestCode judgeSystem;
-
-    private void Start()
+    public InGame judgeSystem;
+    public int noteType;
+    public double now;
+    virtual public  void Start()
     {
         judgeTime = new double[6];
         judgeTime[0] = -0.2;
@@ -29,7 +31,7 @@ public class Note : MonoBehaviour
 
     public void Update()
     {
-        double now = AudioSettings.dspTime - startDspTime; 
+        now = judgeSystem.FMOD.GetCurrentTime();
         float dirX = Mathf.Cos(radianDir);
         float dirY = Mathf.Sin(radianDir);
 
@@ -49,9 +51,17 @@ public class Note : MonoBehaviour
                 {
                     judgeSystem.inRangeNotes.Remove(this);
                     judgeSystem.judges[noteIndex] = 0;
-                    Destroy(gameObject);
+                    gameObject.SetActive(false);
                 }
             }
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (judgeSystem.inRangeNotes.Contains(this))
+        {
+            judgeSystem.inRangeNotes.Remove(this);
         }
     }
 
@@ -63,7 +73,7 @@ public class Note : MonoBehaviour
         }
     }
 
-    public void SetData(double dspTime, double startT, float radianDir, int index)
+    virtual public void SetData(double dspTime, double startT, float radianDir, int index)
     {
         this.dspTime = dspTime;
         startDspTime = startT;
@@ -78,6 +88,7 @@ public class Note : MonoBehaviour
         Quaternion xCorrection = Quaternion.Euler(90f, 0f, 0f);
         transform.rotation = yRotation * xCorrection;
     }
+
     float NormalizeRadian(float rad)
     {
         return (rad % (2 * Mathf.PI) + (2 * Mathf.PI)) % (2 * Mathf.PI);
@@ -89,7 +100,7 @@ public class Note : MonoBehaviour
         return diff <= range || diff >= (2 * Mathf.PI - range);
     }
 
-    public int Judge(double inputDspTime, float dir)
+    public int Judge(double inputDspTime, float dir, Key key)
     {
         double diff = inputDspTime - dspTime;
 
@@ -104,13 +115,50 @@ public class Note : MonoBehaviour
         {
             return -1;
         }
+
+        bool checkKey = false;
+        switch (noteType)
+        {
+            // Tap Note
+            case 0:
+                if(key == Key.X)
+                {
+                    checkKey = true;
+                }
+                break;
+            // Left Flip Note
+            case 1:
+                if(key == Key.Z)
+                {
+                    checkKey = true;
+                }
+                break;
+            // Right Flip Note
+            case 2:
+                if (key == Key.C)
+                {
+                    checkKey = true;
+                }
+                break;
+        }
+
+        // Key Miss
+        if (!checkKey)
+        {
+            judgeSystem.inRangeNotes.Remove(this);
+            judgeSystem.judges[noteIndex] = 0;
+            gameObject.SetActive(false);
+            return 0; 
+        }
+        
+
         // -200ms ~ -150ms
         // Miss
         if(diff <= judgeTime[1])
         {
             judgeSystem.inRangeNotes.Remove(this);
             judgeSystem.judges[noteIndex] = 1;
-            Destroy(gameObject);
+            gameObject.SetActive(false);
             return 1;
         }
         // -150ms ~ -100ms
@@ -119,7 +167,7 @@ public class Note : MonoBehaviour
         {
             judgeSystem.inRangeNotes.Remove(this);
             judgeSystem.judges[noteIndex] = 2;
-            Destroy(gameObject);
+            gameObject.SetActive(false);
             return 2;
         }
         // -100ms ~ -50ms
@@ -128,7 +176,7 @@ public class Note : MonoBehaviour
         {
             judgeSystem.inRangeNotes.Remove(this);
             judgeSystem.judges[noteIndex] = 3;
-            Destroy(gameObject);
+            gameObject.SetActive(false);
             return 3;
         }
         // -50ms ~ 20ms
@@ -137,7 +185,7 @@ public class Note : MonoBehaviour
         {
             judgeSystem.inRangeNotes.Remove(this);
             judgeSystem.judges[noteIndex] = 4;
-            Destroy(gameObject);
+            gameObject.SetActive(false);
             return 4;
         }
         // 20ms ~ 50ms
@@ -146,14 +194,14 @@ public class Note : MonoBehaviour
         {
             judgeSystem.inRangeNotes.Remove(this);
             judgeSystem.judges[noteIndex] = 1;
-            Destroy(gameObject);
+            gameObject.SetActive(false);
             return 1;
         }
         // 50ms ~
         // fail
         judgeSystem.inRangeNotes.Remove(this);
         judgeSystem.judges[noteIndex] = 0;
-        Destroy(gameObject);
+        gameObject.SetActive(false);
         return 0;
     }
 

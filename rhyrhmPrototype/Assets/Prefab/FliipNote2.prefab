@@ -98,6 +98,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 511c3a1c690949a45ba59395ef829b0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  noteIndex: 0
+  judgeSystem: {fileID: 0}
+  noteType: 2
 --- !u!1 &6229630707904148923
 GameObject:
   m_ObjectHideFlags: 0

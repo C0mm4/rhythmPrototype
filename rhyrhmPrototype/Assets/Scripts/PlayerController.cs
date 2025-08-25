@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    public TestCode code;
+    public InGame inGame;
     [SerializeField]
     private float cursorDir;
 
@@ -26,10 +26,13 @@ public class PlayerController : MonoBehaviour
     {
         var keyPressed = Keyboard.current.allKeys
             .FirstOrDefault(k => k.wasPressedThisFrame);
+
         
         if (keyPressed != null)
         {
-            code.OnInput(cursorDir);
+            Key key = keyPressed.keyCode;
+            Debug.Log(key);
+            inGame.OnInput(cursorDir, key);
         }
     }
 
